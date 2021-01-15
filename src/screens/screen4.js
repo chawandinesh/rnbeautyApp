@@ -247,7 +247,8 @@ const Screen4 = (props) => {
             flexDirection: 'row',
           }}>
           <TouchableOpacity
-            onPress={() => getImage()}
+            disabled= {!isAll ? false : true}
+            onPress={() => { !isAll ? getImage() : null}}
             style={{
               width: width * 0.2,
               backgroundColor: '#ffc',

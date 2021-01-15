@@ -23,7 +23,7 @@ const Screen3 = (props) => {
   const [docItems, setDocItems] = React.useState([]);
   const [sizeOfDocument, setSizeOfDocument] = React.useState(0);
   const [kData, setKData] = React.useState([]);
-  const [hiddenLayout, setHiddenLayout] = React.useState([])
+  const [hiddenLayout, setHiddenLayout] = React.useState([]);
   const openRowRefs = [];
 
   const onRowDidOpen = (rowKey, rowMap) => {
@@ -121,6 +121,7 @@ const Screen3 = (props) => {
             disableRightSwipe
             closeOnRowBeginSwipe
             closeOnRowOpen={false}
+            disableLeftSwipe
             data={mArray}
             keyExtractor={(item, idx) => idx.toString()}
             renderItem={(data, rowMap) => {
@@ -134,19 +135,31 @@ const Screen3 = (props) => {
               return (
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() =>
-                    props.navigation.navigate('Screen4', {
-                      data: data.item.doc,
-                      index: 0,
-                      isAll: true
-                    })
-                  }>
+                  onPress={() => {
+                    firestore()
+                      .collection('products')
+                      .doc(data.item.doc)
+                      .onSnapshot((documentSnapshot) => {
+                        props.navigation.navigate('Screen4', {
+                          data: data.item.doc,
+                          index: documentSnapshot
+                            .data()
+                            .items.findIndex(
+                              (e) => e.name === data.item.item.name,
+                            ),
+                          isAll: true,
+                        });
+                      });
+                  }}>
                   <View
-                      onLayout={(event) => {
-                        var {x, y, width, height} = event.nativeEvent.layout;
-                       // console.log(x,y, width, height, data.item.name)
-                        setHiddenLayout([...hiddenLayout,{name: data.item.item.name, height: height}])
-                      }}
+                    onLayout={(event) => {
+                      var {x, y, width, height} = event.nativeEvent.layout;
+                      // console.log(x,y, width, height, data.item.name)
+                      setHiddenLayout([
+                        ...hiddenLayout,
+                        {name: data.item.item.name, height: height},
+                      ]);
+                    }}
                     style={{
                       backgroundColor: '#111',
                       borderBottomLeftRadius: 40,
@@ -178,9 +191,10 @@ const Screen3 = (props) => {
                           borderRightWidth: 2,
                           borderBottomWidth: 1,
                         }}>
-                        <Text style={{fontSize: 20,padding: 10, color: '#faf'}}>
-                        Name:
-                      </Text>
+                        <Text
+                          style={{fontSize: 20, padding: 10, color: '#faf'}}>
+                          Name:
+                        </Text>
                       </View>
                       <View
                         style={{
@@ -193,15 +207,14 @@ const Screen3 = (props) => {
                           width: '55%',
                         }}>
                         <Text
-                        style={{
-                         fontSize: 20,
-			                   padding: 10,
-                         fontWeight: 'bold',
-                          color: '#fff',
-                        
-                        }}>
-                        {data.item.item.name}
-                      </Text>
+                          style={{
+                            fontSize: 20,
+                            padding: 10,
+                            fontWeight: 'bold',
+                            color: '#fff',
+                          }}>
+                          {data.item.item.name}
+                        </Text>
                       </View>
                     </View>
                     <View
@@ -211,7 +224,7 @@ const Screen3 = (props) => {
                         justifyContent: 'space-around',
                         marginTop: 30,
                       }}>
-                        <View
+                      <View
                         style={{
                           width: '40%',
                           borderColor: '#fff',
@@ -219,9 +232,10 @@ const Screen3 = (props) => {
                           borderRightWidth: 2,
                           borderBottomWidth: 1,
                         }}>
-                        <Text style={{fontSize: 20,padding: 10, color: '#faf'}}>
-                        Details:
-                      </Text>
+                        <Text
+                          style={{fontSize: 20, padding: 10, color: '#faf'}}>
+                          Details:
+                        </Text>
                       </View>
                       <View
                         style={{
@@ -234,15 +248,14 @@ const Screen3 = (props) => {
                           width: '55%',
                         }}>
                         <Text
-                        style={{
-                         fontSize: 20,
-			                   padding: 10,
-                         fontWeight: 'bold',
-                          color: '#fff',
-                        
-                        }}>
-                        {data.item.item.detailsOfItem}
-                      </Text>
+                          style={{
+                            fontSize: 20,
+                            padding: 10,
+                            fontWeight: 'bold',
+                            color: '#fff',
+                          }}>
+                          {data.item.item.detailsOfItem}
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -250,21 +263,23 @@ const Screen3 = (props) => {
               );
             }}
             renderHiddenItem={(data, rowMap) => {
-              const getHeight = hiddenLayout && hiddenLayout.find((e) => e.name === data.item.item.name)
+              const getHeight =
+                hiddenLayout &&
+                hiddenLayout.find((e) => e.name === data.item.item.name);
               return (
                 <TouchableOpacity
-                style={{
-                  marginTop: 20,
-                  width: width * 0.9,
-                  borderBottomLeftRadius: 40,
-                  borderTopLeftRadius: 40,
-                  height: getHeight ? getHeight.height : 200,
-                  justifyContent: 'flex-end',
-                  padding: 20,
-                  flexDirection: 'row',
-                  backgroundColor: 'darkred',
-                  alignItems: 'center',
-                }}
+                  style={{
+                    marginTop: 20,
+                    width: width * 0.9,
+                    borderBottomLeftRadius: 40,
+                    borderTopLeftRadius: 40,
+                    height: getHeight ? getHeight.height : 200,
+                    justifyContent: 'flex-end',
+                    padding: 20,
+                    flexDirection: 'row',
+                    backgroundColor: 'darkred',
+                    alignItems: 'center',
+                  }}
                   onPress={() => handleDelete(rowMap, data)}>
                   <Text
                     style={{
