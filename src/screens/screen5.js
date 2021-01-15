@@ -17,17 +17,24 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 
 const {height, width} = Dimensions.get('window');
 
-const Screen3 = (props) => {
+const Screen5 = (props) => {
   const [state, setState] = useContext(GlobalContext);
   const [dataItems, setDataItems] = React.useState([]);
   const [docItems, setDocItems] = React.useState([]);
   const [sizeOfDocument, setSizeOfDocument] = React.useState(0);
   const [kData, setKData] = React.useState([]);
+  const [time, setTime] = React.useState(true);
   const [hiddenLayout, setHiddenLayout] = React.useState([]);
   const openRowRefs = [];
 
   const onRowDidOpen = (rowKey, rowMap) => {
     openRowRefs.push(rowMap[rowKey]);
+  };
+
+  const setTimer = () => {
+    setTimeout(() => {
+      setTime(false);
+    }, 2000);
   };
 
   useLayoutEffect(() => {
@@ -57,6 +64,7 @@ const Screen3 = (props) => {
 
   React.useEffect(() => {
     let docItem = [];
+    setTimer();
     firestore()
       .collection('products')
       .get()
@@ -136,20 +144,23 @@ const Screen3 = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    firestore()
-                      .collection('products')
-                      .doc(data.item.doc)
-                      .onSnapshot((documentSnapshot) => {
-                        props.navigation.navigate('Screen4', {
-                          data: data.item.doc,
-                          index: documentSnapshot
-                            .data()
-                            .items.findIndex(
-                              (e) => e.name === data.item.item.name,
-                            ),
-                          isAll: true,
+                    props.navigation.navigate('Screen6', {data: data.item})
+                    {/**
+                      firestore()
+                        .collection('products')
+                        .doc(data.item.doc)
+                        .onSnapshot((documentSnapshot) => {
+                          props.navigation.navigate('Screen4', {
+                            data: data.item.doc,
+                            index: documentSnapshot
+                              .data()
+                              .items.findIndex(
+                                (e) => e.name === data.item.item.name,
+                              ),
+                            isAll: true,
+                          });
                         });
-                      });
+                     */}
                   }}>
                   <View
                     onLayout={(event) => {
@@ -297,27 +308,49 @@ const Screen3 = (props) => {
             rightOpenValue={-75}
           />
         ) : (
-          <View
-            style={{
-              backgroundColor: '#000',
-              opacity: 0.5,
-              padding: 30,
-              width: width * 0.9,
-              borderLeftColor: '#ffa',
-              borderBottomLeftRadius: 20,
-              borderLeftWidth: 5,
-              borderBottomColor: '#f5b5f2',
-              borderBottomWidth: 10,
-            }}>
-            <Spinner />
-            <Text style={{fontSize: 25, color: '#fff', lineHeight: 40}}>
-              Wait untill fetching data...
-            </Text>
-          </View>
+          <>
+            {time ? (
+              <View
+                style={{
+                  backgroundColor: '#000',
+                  opacity: 0.5,
+                  padding: 30,
+                  width: width * 0.9,
+                  borderLeftColor: '#ffa',
+                  borderBottomLeftRadius: 20,
+                  borderLeftWidth: 5,
+                  borderBottomColor: '#f5b5f2',
+                  borderBottomWidth: 10,
+                }}>
+                <Spinner />
+
+                <Text style={{fontSize: 25, color: '#fff', lineHeight: 40}}>
+                  Wait untill fetching data...
+                </Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  backgroundColor: '#000',
+                  opacity: 0.5,
+                  padding: 30,
+                  width: width * 0.9,
+                  borderLeftColor: '#ffa',
+                  borderBottomLeftRadius: 20,
+                  borderLeftWidth: 5,
+                  borderBottomColor: '#f5b5f2',
+                  borderBottomWidth: 10,
+                }}>
+                <Text style={{fontSize: 25, color: '#fff', lineHeight: 40}}>
+                  No Data Found
+                </Text>
+              </View>
+            )}
+          </>
         )}
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
-export default Screen3;
+export default Screen5;

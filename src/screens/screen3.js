@@ -50,18 +50,15 @@ const Screen3 = (props) => {
   }, [props.navigation]);
 
   const handleDelete = async (rowMap, data) => {
-   // console.log(rowMap, data);
-    rowMap[data.index].closeRow();
-    dataItems.splice(dataItems[data.index], 1);
-    setDataItems(dataItems);
-    await firestore()
-      .collection('products')
-      .doc(selectedItem)
-      .set({items: dataItems})
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      rowMap[data.index].closeRow();
+      await firestore()
+        .collection('products')
+        .doc(selectedItem)
+        .set({items: dataItems.filter((e,idx) => idx !== data.index)})
+        .then((res) => console.log('res'))
+        .catch((err) => console.log(err));
   };
-  //console.log(hiddenLayout)
+
   React.useEffect(() => {
     const subscriber = firestore()
       .collection('products')
@@ -111,7 +108,6 @@ const Screen3 = (props) => {
                   <View
                   onLayout={(event) => {
                     var {x, y, width, height} = event.nativeEvent.layout;
-                   // console.log(x,y, width, height, data.item.name)
                     setHiddenLayout([...hiddenLayout,{name: data.item.name, height: height}])
                   }}
                     style={{
@@ -223,32 +219,35 @@ const Screen3 = (props) => {
             }}
             renderHiddenItem={(data, rowMap) => {
               const getHeight = hiddenLayout && hiddenLayout.find((e) => e.name === data.item.name)
-              console.log(getHeight,'height')
               return (
                 <TouchableOpacity
                   style={{
                     marginTop: 20,
-                    width: width * 0.9,
+                    width: width * 1,
+                    borderBottomLeftRadius: 40,
                     borderBottomLeftRadius: 40,
                     borderTopLeftRadius: 40,
                     height: getHeight ? getHeight.height : 200,
-                 //   height: "auto",
                     justifyContent: 'flex-end',
                     padding: 20,
                     flexDirection: 'row',
-                    backgroundColor: 'darkred',
+                    backgroundColor: 'transparent',
                     alignItems: 'center',
                   }}
                   onPress={() => handleDelete(rowMap, data)}>
+                    <View style={{backgroundColor:'darkred',padding: 20, justifyContent:'center',height: getHeight ? getHeight.height : 200}}>
+
                   <Text
                     style={{
                       color: '#fff',
                       fontWeight: 'bold',
                       fontSize: 18,
+                      padding: 10,
                       fontStyle: 'italic',
                     }}>
                     Delete
                   </Text>
+                    </View>
                 </TouchableOpacity>
               );
             }}

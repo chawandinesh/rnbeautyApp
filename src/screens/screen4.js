@@ -152,7 +152,7 @@ const Screen4 = (props) => {
           <Input
             style={{color: '#000'}}
             placeholder="Category of Makeup"
-            value={details.category}
+            value={details && details.category}
             disabled={isAll}
             onChangeText={(text) => setDetails({...details, category: text})}
           />
@@ -170,7 +170,7 @@ const Screen4 = (props) => {
             style={{color: '#000'}}
             disabled={isAll}
             placeholder="Name of Makeup Item"
-            value={details.name}
+            value={details && details.name}
             onChangeText={(text) => setDetails({...details, name: text})}
           />
         </Item>
@@ -187,7 +187,7 @@ const Screen4 = (props) => {
             style={{color: '#000'}}
             placeholder="Details of Makeup item"
             disabled={isAll}
-            value={details.detailsOfItem}
+            value={details && details.detailsOfItem}
             onChangeText={(text) =>
               setDetails({...details, detailsOfItem: text})
             }
@@ -206,7 +206,7 @@ const Screen4 = (props) => {
             style={{color: '#000'}}
             placeholder="How to use ?"
             disabled={isAll}
-            value={details.useMethod}
+            value={details && details.useMethod}
             onChangeText={(text) => setDetails({...details, useMethod: text})}
           />
         </Item>
@@ -234,7 +234,7 @@ const Screen4 = (props) => {
             }}
             placeholder="Enter..."
             placeholderTextColor="#777"
-            value={details.description}
+            value={details && details.description}
             onChangeText={(text) => setDetails({...details, description: text})}
           />
         </View>
@@ -257,7 +257,7 @@ const Screen4 = (props) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {details.image ? (
+            {details && details.image ? (
               <Image
                 source={{uri: details.image}}
                 resizeMode="stretch"
